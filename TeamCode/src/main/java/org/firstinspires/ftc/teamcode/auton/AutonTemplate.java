@@ -30,14 +30,17 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-
+import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 
 @TeleOp
 public class AutonTemplate extends LinearOpMode
-{   
+{
     //INTRODUCE VARIABLES HERE
-
+    private DcMotor leftFrontDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor rightBackDrive = null;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -55,12 +58,12 @@ public class AutonTemplate extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-     // Tag ID 1,2,3 from the 36h11 family 
-     /*EDIT IF NEEDED!!!*/
+    // Tag ID 1,2,3 from the 36h11 family
+    /*EDIT IF NEEDED!!!*/
 
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
+    int LEFT = 17;
+    int MIDDLE = 18;
+    int RIGHT = 19;
 
     AprilTagDetection tagOfInterest = null;
 
@@ -91,13 +94,19 @@ public class AutonTemplate extends LinearOpMode
 
 
         //HARDWARE MAPPING HERE etc.
-
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "front_left");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "back_left");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "front_right");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "back_right");
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -108,21 +117,9 @@ public class AutonTemplate extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == LEFT)
+                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
                     {
-                        //left code
-                        tagFound = true;
-                        break;
-                    }
-                    else if(tag.id == MIDDLE)
-                    {
-                        //middle code
-                        tagFound = true;
-                        break;
-                    }
-                    else if(tag.id == RIGHT)
-                    {
-                        //right code
+                        tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
@@ -186,8 +183,8 @@ public class AutonTemplate extends LinearOpMode
         }
 
         //PUT AUTON CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
+        forward(1,10000);
 
-        
     }
 
     void tagToTelemetry(AprilTagDetection detection)
@@ -199,5 +196,41 @@ public class AutonTemplate extends LinearOpMode
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+    void forward(double speed, long time){
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+        sleep(time);
+    }
+    void reset(long time){
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        sleep(time);
+    }
+
+    void right(double speed, long time){
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(-speed);
+        leftBackDrive.setPower(-speed);
+        rightBackDrive.setPower(speed);
+        sleep(time);
+    }
+    void left(double speed, long time){
+        leftFrontDrive.setPower(-speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(-speed);
+        sleep(time);
+    }
+    void back(double speed, long time){
+        leftFrontDrive.setPower(-speed);
+        rightFrontDrive.setPower(-speed);
+        leftBackDrive.setPower(-speed);
+        rightBackDrive.setPower(-speed);
+        sleep(time);
     }
 }
