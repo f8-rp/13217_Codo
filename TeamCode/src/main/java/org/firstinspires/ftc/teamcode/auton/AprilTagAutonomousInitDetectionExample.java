@@ -30,7 +30,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import java.util.ArrayList;
 
 @TeleOp
@@ -167,13 +167,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         }
 
         /* Actually do something useful */
-        if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            //trajectory
-        }else if(tagOfInterest.id == MIDDLE){
-            //trajectory
-        }else{
-            //trajectory
-        }
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

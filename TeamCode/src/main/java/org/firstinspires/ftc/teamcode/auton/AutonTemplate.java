@@ -32,6 +32,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @TeleOp
 public class AutonTemplate extends LinearOpMode
@@ -41,6 +42,7 @@ public class AutonTemplate extends LinearOpMode
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private DcMotor slide = null;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -98,10 +100,11 @@ public class AutonTemplate extends LinearOpMode
         leftBackDrive  = hardwareMap.get(DcMotor.class, "back_left");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "front_right");
         rightBackDrive = hardwareMap.get(DcMotor.class, "back_right");
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        slide = hardwareMap.get(DcMotor.class, "slide");
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         /*
          * The INIT-loop:
@@ -178,13 +181,35 @@ public class AutonTemplate extends LinearOpMode
         }
         else
         {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.addLine("No tag snapshot available.");
             telemetry.update();
         }
 
         //PUT AUTON CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
-        forward(1,10000);
+        forward(1,50);
+        left(0.5,   1200);
+        right(0.5,10);
+        forward(0.5, 1900);
+        back(0.5,100);
+        right(0.5,450);
+        slideUp();
+        pickUp();
+        slideUp();
+        pickUp();
+        slideUp();
 
+        if(tagOfInterest.id==LEFT){
+            left(0.5,600);
+            back(0.5,1850);
+        }
+        if(tagOfInterest.id==MIDDLE){
+            left(0.5,600);
+            back(0.5,1850);
+            right(0.5,500);
+        }
+        if(tagOfInterest.id==RIGHT){
+            right(0.5,300);
+        }
     }
 
     void tagToTelemetry(AprilTagDetection detection)
@@ -203,13 +228,13 @@ public class AutonTemplate extends LinearOpMode
         leftBackDrive.setPower(speed);
         rightBackDrive.setPower(speed);
         sleep(time);
+        reset();
     }
-    void reset(long time){
+    void reset(){
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
-        sleep(time);
     }
 
     void right(double speed, long time){
@@ -218,6 +243,7 @@ public class AutonTemplate extends LinearOpMode
         leftBackDrive.setPower(-speed);
         rightBackDrive.setPower(speed);
         sleep(time);
+        reset();
     }
     void left(double speed, long time){
         leftFrontDrive.setPower(-speed);
@@ -225,6 +251,7 @@ public class AutonTemplate extends LinearOpMode
         leftBackDrive.setPower(speed);
         rightBackDrive.setPower(-speed);
         sleep(time);
+        reset();
     }
     void back(double speed, long time){
         leftFrontDrive.setPower(-speed);
@@ -232,5 +259,37 @@ public class AutonTemplate extends LinearOpMode
         leftBackDrive.setPower(-speed);
         rightBackDrive.setPower(-speed);
         sleep(time);
+        reset();
+    }
+    void turnRightNinety(double speed){
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(-speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(-speed);
+        sleep(800);
+        reset();
+    }
+    void turnLeftNinety(double speed){
+        leftFrontDrive.setPower(-speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(-speed);
+        rightBackDrive.setPower(speed);
+        sleep(750);
+        reset();
+    }
+    void slideUp(){
+        slide.setPower(-1);
+        sleep(2000);
+        slide.setPower(-0.1);
+        /*//release cone*/
+        sleep(2000);
+        slide.setPower(0);
+    }
+    void pickUp(){
+        turnRightNinety(0.5);
+        sleep(70);
+        forward(0.5, 1300);
+        back(0.5, 1550);
+        turnLeftNinety(0.5);
     }
 }
