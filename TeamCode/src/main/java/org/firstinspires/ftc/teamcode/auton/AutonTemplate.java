@@ -22,7 +22,7 @@
 package org.firstinspires.ftc.teamcode.auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@TeleOp
+@Autonomous
 public class AutonTemplate extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
@@ -186,29 +186,55 @@ public class AutonTemplate extends LinearOpMode
         }
 
         //PUT AUTON CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
-        forward(1,50);
-        left(0.5,   1200);
-        right(0.5,10);
-        forward(0.5, 1900);
-        back(0.5,100);
-        right(0.5,450);
-        slideUp();
-        pickUp();
-        slideUp();
-        pickUp();
-        slideUp();
 
-        if(tagOfInterest.id==LEFT){
+//        strafe left 1 square and move forward 2 squares
+        forward(0.5,70);
+        reset();
+        sleep(500);
+        left(0.5,   1050);
+        reset();
+        sleep(450);
+        forward(0.5, 1650);
+        back(1,1);
+        reset();
+
+//        move right in front of high pole
+        sleep(250);
+        right(0.5,600);
+        left(1,1);
+        reset();
+        sleep(250);
+
+//        drop pre-loaded cone into pole
+        forward(0.5, 50);
+        slideUp();
+        back(0.5,50);
+        reset();
+        sleep(250);
+
+//        pick up new cone and drop new cone into pole
+        pickUp();
+        forward(0.5, 50);
+        slideUp();
+        back(0.5,50);
+        reset();
+
+//        drive into parking zone based on signal sleeve ID
+        if(tagOfInterest.id==RIGHT){
             left(0.5,600);
             back(0.5,1850);
+            reset();
         }
         if(tagOfInterest.id==MIDDLE){
             left(0.5,600);
             back(0.5,1850);
-            right(0.5,500);
+            right(0.5,1000);
+            reset();
         }
-        if(tagOfInterest.id==RIGHT){
-            right(0.5,300);
+        if(tagOfInterest.id==LEFT){
+            right(0.5,1650);
+            back(0.5,1650);
+            reset();
         }
     }
 
@@ -266,7 +292,7 @@ public class AutonTemplate extends LinearOpMode
         rightFrontDrive.setPower(-speed);
         leftBackDrive.setPower(speed);
         rightBackDrive.setPower(-speed);
-        sleep(800);
+        sleep(780);
         reset();
     }
     void turnLeftNinety(double speed){
@@ -274,7 +300,7 @@ public class AutonTemplate extends LinearOpMode
         rightFrontDrive.setPower(speed);
         leftBackDrive.setPower(-speed);
         rightBackDrive.setPower(speed);
-        sleep(750);
+        sleep(800);
         reset();
     }
     void slideUp(){
@@ -288,8 +314,10 @@ public class AutonTemplate extends LinearOpMode
     void pickUp(){
         turnRightNinety(0.5);
         sleep(70);
-        forward(0.5, 1300);
-        back(0.5, 1550);
+        forward(0.5, 1200);
+        back(1,1);
+        sleep(250);
         turnLeftNinety(0.5);
+        left(0.5, 1200);
     }
 }
