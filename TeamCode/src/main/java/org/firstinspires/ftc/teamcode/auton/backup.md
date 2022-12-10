@@ -1,23 +1,23 @@
 /*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+* Copyright (c) 2021 OpenFTC Team
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+  */
 
 package org.firstinspires.ftc.teamcode.auton;
 
@@ -31,8 +31,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -42,15 +40,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous
 public class AutonTemplate extends LinearOpMode
 {
-    //INTRODUCE VARIABLES HERE
-    DcMotor leftFrontDrive = null;
-    DcMotor leftBackDrive = null;
-    DcMotor rightFrontDrive = null;
-    DcMotor rightBackDrive = null;
-    DcMotor slide = null;
-    CRServo claw = null;
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+//INTRODUCE VARIABLES HERE
+DcMotor leftFrontDrive = null;
+DcMotor leftBackDrive = null;
+DcMotor rightFrontDrive = null;
+DcMotor rightBackDrive = null;
+DcMotor slide = null;
+OpenCvCamera camera;
+AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -62,8 +59,6 @@ public class AutonTemplate extends LinearOpMode
     double fy = 578.272;
     double cx = 402.145;
     double cy = 221.506;
-
-    boolean t = true;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -108,7 +103,6 @@ public class AutonTemplate extends LinearOpMode
         rightFrontDrive = hardwareMap.get(DcMotor.class, "front_right");
         rightBackDrive = hardwareMap.get(DcMotor.class, "back_right");
         slide = hardwareMap.get(DcMotor.class, "slide");
-        claw = hardwareMap.crservo.get("hand");
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -120,12 +114,6 @@ public class AutonTemplate extends LinearOpMode
          */
         while (!isStarted() && !isStopRequested())
         {
-            if(t==true) {
-                claw.setPower(-1);
-                sleep(600);
-                claw.setPower(0);
-                t=false;
-            }
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
@@ -204,35 +192,27 @@ public class AutonTemplate extends LinearOpMode
         // 2 squares, 0.5 speed 1650 time
         // move into middle of square
 
-        slide.setPower(-0.5);
-        sleep(400);
-        slide.setPower(0.1);
+        slide.setPower(-1);
+        sleep(1000);
         forward(0.5,70, true);
         sleep(500);
 
         //go left 1 square and forward 1 square
         left(0.5,1050, true);
         reset();
-        sleep(100);
+        sleep(700);
         //line up with pole and bring slide up
-        forward(0.5,775, true);
-        left(0.5,580,true);
+        forward(0.5,880, true);
+        back(1,1, true);
+        right(1,1, true);
         slideUp();
-        forward(0.5,100,true);
-        sleep(350);
-        //drop cone
-        claw.setPower(1);
-        sleep(600);
-        //come back and move to right square
-        back(0.5,100, true);
-        right(0.5,530,true);
         forward(0.5, 50, true);
         sleep(750);
         //drop cone
+        back(0.5,50, true);
+        reset();
         slideDown();
-        forward(0.5,580, true);
-        right(0.5,1060,true);
-        pickUp()
+
 
         //drive into parking zone based on signal sleeve ID
         if(tagOfInterest.id==RIGHT){

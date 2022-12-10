@@ -33,7 +33,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import java.util.ArrayList;
 
-@TeleOp
+@Autonomous
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
     OpenCvCamera camera;
